@@ -1,7 +1,6 @@
 'use strict';
 
 const url = require('url');
-const curl = new (require( 'curl-request' ))();
 const qs = require('qs');
 const caseless = require('caseless');
 const uuid = require('uuid');
@@ -15,8 +14,8 @@ function OAuth (request) {
 }
 
 OAuth.prototype.buildParams = function (_oauth, uri, method, query, form, qsLib) {
-  var oa = {}
-  for (var i in _oauth) {
+  let oa = {};
+  for (let i in _oauth) {
     oa['oauth_' + i] = _oauth[i]
   }
   if (!oa.oauth_version) {
@@ -29,22 +28,22 @@ OAuth.prototype.buildParams = function (_oauth, uri, method, query, form, qsLib)
     oa.oauth_nonce = uuid().replace(/-/g, '')
   }
   if (!oa.oauth_signature_method) {
-    oa.oauth_signature_method = 'HMAC-SHA1'
+    oa.oauth_signature_method = 'RSA-SHA1'
   }
 
-  var consumer_secret_or_private_key = oa.oauth_consumer_secret || oa.oauth_private_key // eslint-disable-line camelcase
-  delete oa.oauth_consumer_secret
-  delete oa.oauth_private_key
+  const consumer_secret_or_private_key = oa.oauth_consumer_secret || oa.oauth_private_key // eslint-disable-line camelcase
+  delete oa.oauth_consumer_secret;
+  delete oa.oauth_private_key;
 
-  var token_secret = oa.oauth_token_secret // eslint-disable-line camelcase
-  delete oa.oauth_token_secret
+  const token_secret = oa.oauth_token_secret // eslint-disable-line camelcase
+  delete oa.oauth_token_secret;
 
-  var realm = oa.oauth_realm
-  delete oa.oauth_realm
-  delete oa.oauth_transport_method
+  const realm = oa.oauth_realm;
+  delete oa.oauth_realm;
+  delete oa.oauth_transport_method;
 
-  var baseurl = uri.protocol + '//' + uri.host + uri.pathname
-  var params = qsLib.parse([].concat(query, form, qsLib.stringify(oa)).join('&'))
+  const baseurl = uri.protocol + '//' + uri.host + uri.pathname;
+  const params = qsLib.parse([].concat(query, form, qsLib.stringify(oa)).join('&'))
 
   oa.oauth_signature = oauth.sign(
     oa.oauth_signature_method,
@@ -53,17 +52,17 @@ OAuth.prototype.buildParams = function (_oauth, uri, method, query, form, qsLib)
     params,
     consumer_secret_or_private_key, // eslint-disable-line camelcase
     token_secret // eslint-disable-line camelcase
-  )
+  );
 
   if (realm) {
     oa.realm = realm
   }
 
   return oa
-}
+};
 
 OAuth.prototype.buildBodyHash = function (_oauth, body) {
-  if (['HMAC-SHA1', 'RSA-SHA1'].indexOf(_oauth.signature_method || 'HMAC-SHA1') < 0) {
+  if (['HMAC-SHA1', 'RSA-SHA1'].indexOf(_oauth.signature_method || 'RSA-SHA1') < 0) {
     this.request.emit('error', new Error('oauth: ' + _oauth.signature_method +
       ' signature_method not supported with body_hash signing.'))
   }
@@ -80,7 +79,7 @@ OAuth.prototype.concatParams = function (oa, sep, wrap) {
 
   var params = Object.keys(oa).filter(function (i) {
     return i !== 'realm' && i !== 'oauth_signature'
-  }).sort()
+  }).sort();
 
   if (oa.realm) {
     params.splice(0, 0, 'realm')

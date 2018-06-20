@@ -6,6 +6,7 @@
     "bluebird": "^3.5.1",
     "commander": "^2.12.1",
     "curl-request": "^1.1.1",
+    "oauth-sign": "~0.8.2",
     "jira-connector": "https://github.com/kolima/jira-connector.git"
   }
 }
